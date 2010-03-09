@@ -1,0 +1,29 @@
+Guile-GSL
+=========
+
+Author: Jason R. Green
+
+Guile-GSL is an implementation of Guile bindings and wrappers for the GNU
+Scientific Library. Guile is the GNU extension language and Scheme
+interpreter. The GNU Scientific Library is a free numerical library licensed
+under the GNU GPL.
+
+Comments
+--------
+
+In GSL, double precision numbers are the default. If a type other than double
+is involved, function names are modified by a type-related modifier, after the
+initial module prefix. In some of the current Guile-GSL functions doubles are
+assumed. GSL vector and matrix elements are initially zeroed with
+gsl_foo_calloc.
+
+Wrappers
+--------
+
+(e.g., zero_gsl_foo, set_gsl_foo )
+Wrappers have the form
+
+1. Check input, smob are of suitable types
+2. Retrieve immediate word of smob
+3. Perform GSL operation
+4. Invoke the update function

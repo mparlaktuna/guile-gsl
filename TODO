@@ -1,0 +1,3 @@
+Write functions to convert between GSL and SCM matrices
+gsl_matrix* scm_to_gsl_matrix (SCM scm_matrix);
+SCM scm_from_gsl_matrix (gsl_matrix *gsl_matrix);
