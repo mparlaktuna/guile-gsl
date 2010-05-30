@@ -12,7 +12,6 @@ init_gsl (void)
   /* gsl matrix smob */
   gsl_matrix_tag = scm_make_smob_type ("gsl-matrix",
       sizeof (struct gsl_matrix_smob));
-  scm_set_smob_mark (gsl_matrix_tag, mark_gsl_matrix);
   scm_set_smob_free (gsl_matrix_tag, free_gsl_matrix);
   scm_set_smob_print (gsl_matrix_tag, print_gsl_matrix);
 
@@ -21,10 +20,9 @@ init_gsl (void)
   scm_c_define_gsubr ("set-gsl-matrix", 2, 0, 0, set_gsl_matrix);
   scm_c_define_gsubr ("make-gsl-matrix", 2, 0, 0, make_gsl_matrix);
 
-  /* gsl matrix smob */
+  /* gsl vector smob */
   gsl_vector_tag = scm_make_smob_type ("gsl-vector",
       sizeof (struct gsl_vector_smob));
-  scm_set_smob_mark (gsl_vector_tag, mark_gsl_vector);
   scm_set_smob_free (gsl_vector_tag, free_gsl_vector);
   scm_set_smob_print (gsl_vector_tag, print_gsl_vector);
 
@@ -106,16 +104,6 @@ zero_gsl_matrix (SCM gsl_matrix_smob)
   return (SCM_UNSPECIFIED);
 }
 
-SCM
-mark_gsl_matrix (SCM gsl_matrix_smob)
-{
-  struct gsl_matrix_smob *smob = (struct gsl_matrix_smob *)
-    SCM_SMOB_DATA (gsl_matrix_smob);
-
-  /* mark the update function */
-  return (smob->update_func);
-}
-
 size_t
 free_gsl_matrix (SCM gsl_matrix_smob)
 {
@@ -124,8 +112,6 @@ free_gsl_matrix (SCM gsl_matrix_smob)
 
   /* free resources used by the smob */
   gsl_matrix_free (smob->gsl_matrix);
-  scm_gc_free (smob->gsl_matrix, 0, "gsl matrix");
-  scm_gc_free (smob, sizeof (struct gsl_matrix_smob), "gsl-matrix");
 
   return (0);
 }
@@ -219,16 +205,6 @@ zero_gsl_vector (SCM gsl_vector_smob)
   return (SCM_UNSPECIFIED);
 }
 
-SCM
-mark_gsl_vector (SCM gsl_vector_smob)
-{
-  struct gsl_vector_smob *smob = (struct gsl_vector_smob *)
-    SCM_SMOB_DATA (gsl_vector_smob);
-
-  /* mark the update function */
-  return (smob->update_func);
-}
-
 size_t
 free_gsl_vector (SCM gsl_vector_smob)
 {
@@ -237,8 +213,6 @@ free_gsl_vector (SCM gsl_vector_smob)
 
   /* free resources used by the smob */
   gsl_vector_free (smob->gsl_vector);
-  scm_gc_free (smob->gsl_vector, 0, "gsl vector");
-  scm_gc_free (smob, sizeof (struct gsl_vector_smob), "gsl-vector");
 
   return (0);
 }

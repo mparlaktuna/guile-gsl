@@ -1,3 +1,6 @@
+#!/usr/bin/guile -s
+!#
+
 ;; test GSL vectors
 (define a (make-gsl-vector 3))
 (set-gsl-vector a 1.0)
