@@ -1,12 +1,25 @@
-Guile-GSL
+guile-gsl
 =========
 
 Author: Jason R. Green
 
 Guile-GSL is an implementation of Guile bindings and wrappers for the GNU
-Scientific Library. Guile is the GNU extension language and Scheme
-interpreter. The GNU Scientific Library is a free numerical library licensed
-under the GNU GPL.
+Scientific Library (GSL). Guile is the GNU extension language and Scheme
+interpreter. The GSL is a free numerical library licensed under the GNU GPL.
+
+**Currently, there are only GSL matrix and GSL vector types that can be zeroed,
+set, and printed.**
+
+Installation
+------------
+Assumes working versions of GSL and Guile are installed in standard location.
+
+To install in guile-gsl/
+$ make
+and generate the executable guile_gsl.
+
+To run
+$ ./guile_gsl
 
 Comments
 --------

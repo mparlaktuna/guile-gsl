@@ -1,3 +1,5 @@
-Write functions to convert between GSL and SCM matrices
+Combine set_all_gsl_X with set_gsl_X using optional args.
+In print functions, lookup name and print.
+Write functions to convert between GSL and SCM matrices.
 gsl_matrix* scm_to_gsl_matrix (SCM scm_matrix);
 SCM scm_from_gsl_matrix (gsl_matrix *gsl_matrix);

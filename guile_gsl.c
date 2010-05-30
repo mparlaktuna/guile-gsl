@@ -2,7 +2,7 @@
 #include <libguile.h>
 #include "guile_gsl.h"
 
-/* definitions of tags for instances of GSL vector and matrix types */
+/* define tags for instances of GSL vector and matrix types */
 scm_t_bits gsl_vector_tag;
 scm_t_bits gsl_matrix_tag;
 
@@ -17,8 +17,9 @@ init_gsl (void)
 
   /* register gsl matrix functions */
   scm_c_define_gsubr ("zero-gsl-matrix", 1, 0, 0, zero_gsl_matrix);
-  scm_c_define_gsubr ("set-gsl-matrix", 2, 0, 0, set_gsl_matrix);
+  scm_c_define_gsubr ("set-all-gsl-matrix", 2, 0, 0, set_all_gsl_matrix);
   scm_c_define_gsubr ("make-gsl-matrix", 2, 0, 0, make_gsl_matrix);
+  scm_c_define_gsubr ("get-gsl-matrix", 3, 0, 0, get_gsl_matrix);
 
   /* gsl vector smob */
   gsl_vector_tag = scm_make_smob_type ("gsl-vector",
@@ -28,8 +29,9 @@ init_gsl (void)
 
   /* register gsl vector functions */
   scm_c_define_gsubr ("zero-gsl-vector", 1, 0, 0, zero_gsl_vector);
-  scm_c_define_gsubr ("set-gsl-vector", 2, 0, 0, set_gsl_vector);
+  scm_c_define_gsubr ("set-all-gsl-vector", 2, 0, 0, set_all_gsl_vector);
   scm_c_define_gsubr ("make-gsl-vector", 1, 0, 0, make_gsl_vector);
+  scm_c_define_gsubr ("get-gsl-vector", 2, 0, 0, get_gsl_vector);
 }
 
 SCM
@@ -58,7 +60,33 @@ make_gsl_matrix (SCM s_size1, SCM s_size2)
 }
 
 SCM
-set_gsl_matrix (SCM gsl_matrix_smob, SCM number)
+get_gsl_matrix (SCM gsl_matrix_smob, SCM scm_row, SCM scm_col)
+{
+  struct gsl_matrix_smob *smob;
+
+  /* check smob is of a suitable type */
+  scm_assert_smob_type (gsl_matrix_tag, gsl_matrix_smob);
+
+  /* retrieve immediate word of smob */
+  smob = (struct gsl_matrix_smob *) SCM_SMOB_DATA (gsl_matrix_smob);
+
+  /* get gsl matrix element */
+  int row = scm_to_int (scm_row);
+  int col = scm_to_int (scm_col);
+  double element = gsl_matrix_get (smob->gsl_matrix, row, col);
+  SCM scm_element = scm_int2num (element);
+
+  /* invoke the update function */
+  if (scm_is_true (smob->update_func))
+    scm_call_0 (smob->update_func);
+
+  scm_remember_upto_here_1 (gsl_matrix_smob);
+
+  return (scm_element);
+}
+
+SCM
+set_all_gsl_matrix (SCM gsl_matrix_smob, SCM scm_index)
 {
   struct gsl_matrix_smob *smob;
 
@@ -70,7 +98,7 @@ set_gsl_matrix (SCM gsl_matrix_smob, SCM number)
 
   /* set gsl matrix elements */
   gsl_matrix_set_all (smob->gsl_matrix,\
-      scm_num2double (number, 0, "set_gsl_matrix ()"));
+      scm_num2double (scm_index, 0, "set_all_gsl_matrix ()"));
 
   /* invoke the update function */
   if (scm_is_true (smob->update_func))
@@ -159,7 +187,33 @@ make_gsl_vector (SCM s_size)
 }
 
 SCM
-set_gsl_vector (SCM gsl_vector_smob, SCM number)
+get_gsl_vector (SCM gsl_vector_smob, SCM scm_index)
+{
+  struct gsl_vector_smob *smob;
+
+  /* check smob is of a suitable type */
+  scm_assert_smob_type (gsl_vector_tag, gsl_vector_smob);
+
+  /* retrieve immediate word of smob */
+  smob = (struct gsl_vector_smob *) SCM_SMOB_DATA (gsl_vector_smob);
+
+  /* set gsl vector elements */
+  /* get gsl vector element */
+  int index = scm_to_int (scm_index);
+  double element = gsl_vector_get (smob->gsl_vector, index);
+  SCM scm_element = scm_int2num (element);
+
+  /* invoke the update function */
+  if (scm_is_true (smob->update_func))
+    scm_call_0 (smob->update_func);
+
+  scm_remember_upto_here_1 (gsl_vector_smob);
+
+  return (scm_element);
+}
+
+SCM
+set_all_gsl_vector (SCM gsl_vector_smob, SCM scm_index)
 {
   struct gsl_vector_smob *smob;
 
@@ -171,7 +225,7 @@ set_gsl_vector (SCM gsl_vector_smob, SCM number)
 
   /* set gsl vector elements */
   gsl_vector_set_all (smob->gsl_vector,\
-      scm_num2double (number, 0, "set_gsl_vector ()"));
+      scm_num2double (scm_index, 0, "set_all_gsl_vector ()"));
 
   /* invoke the update function */
   if (scm_is_true (smob->update_func))

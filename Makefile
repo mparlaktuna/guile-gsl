@@ -15,7 +15,7 @@ RM      = /bin/rm -f
 
 # compile and assemble C source files into object files
 %.o: %.c
-				$(CC) -I/usr/local/shared/gsl/1.11/32/include -c $(CFLAGS) $*.c
+				$(CC) -c $(CFLAGS) $*.c
  
 # link all object files with external libraries into binaries
 $(EXE): $(OBJ)
